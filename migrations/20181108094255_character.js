@@ -10,6 +10,10 @@ exports.up = function (knex, Promise) {
 
 };
 
+//last table column above, specifies foreign key. reference('tableName.pk')
+//unsigned specifies non-negative integer, onDelete('cascade') specifies that
+//if reference is deleted, delete this column too (bc they rely on each other)
+
 exports.down = function (knex, Promise) {
   return knex.schema.dropTableIfExists('character')
 };

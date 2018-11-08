@@ -5,8 +5,12 @@ const router = express.Router()
 const knex = require('../db/connection')
 
 router.get('/', (req, res) => {
+  //REFACTOR TO PULL OUT force_id specifying its value!
   knex('character')
     .orderBy('character.id', 'asc')
+    .from('character')
+    .select('character.id', 'character.name', 'character.height', 'character.mass', 'force.side')
+    .innerJoin('force', 'force.id', 'character.force_id')
     .then(characters => {
       // Can only res.json once we have received the response/data from the db
       res.json({ characters: characters })
@@ -18,9 +22,12 @@ router.get('/:id', (req, res, next) => {
   const id = req.params.id
 
   knex('character')
-    .where('id', id)
+    .where('character.id', id)
+    .innerJoin('force', 'force.id', 'character.force_id')
+    .innerJoin('character_movie', 'character.id', 'character_movie.character_id')
+    .innerJoin('movie', 'movie.id', 'character_movie.movie_id' )
     .then(character => {
-      res.json({ character: character[0] })
+      res.json({ character: character })
     })
 })
 
